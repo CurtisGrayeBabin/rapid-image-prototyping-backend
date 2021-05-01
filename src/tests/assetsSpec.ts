@@ -15,9 +15,4 @@ describe('Test assets available', () => {
 		const path = '../assets/thumb';
 		expect(fs.existsSync(path)).toBeTruthy();
 	});
-
-	it('ensures the assets/thumb/hehe folder does NOT exist', () => {
-		const path = '../assets/thumb/hehe';
-		expect(fs.existsSync(path)).toBeFalsy();
-	});
 });

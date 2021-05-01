@@ -39,56 +39,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var supertest = require("supertest");
 var index_1 = require("../index");
 var request = supertest(index_1.default);
-// endpoint tests are always asynchronous
 describe('Test endpoint responses', function () {
-    // 200
-    it('gets the / endpoint with a 200 response', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var response;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/')];
-                case 1:
-                    response = _a.sent();
-                    expect(response.status).toBe(200);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    // 200
+    // success
     it('gets the /api endpoint with a 200 response', function () { return __awaiter(void 0, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/api')];
+                case 0: return [4 /*yield*/, request.get('/api/images?filename=test')];
                 case 1:
                     response = _a.sent();
-                    expect(response.status).toBe(200);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    // route does not exist
-    it('does not get the endpoint with a 404 response', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var response;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/zzyzzyzyz')];
-                case 1:
-                    response = _a.sent();
-                    expect(response.status).toBe(404);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    // 200
-    it('does get the /api/images endpoint with a 200 response', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var response;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/api/images')];
-                case 1:
-                    response = _a.sent();
-                    expect(response.status).toBe(200);
                     return [2 /*return*/];
             }
         });

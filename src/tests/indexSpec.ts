@@ -6,17 +6,22 @@ const request = supertest(app);
 // endpoint tests are always asynchronous
 
 describe('Test endpoint responses', () => {
-	// success
+	// 200
+	it('gets the / endpoint with a 200 response', async () => {
+		const response = await request.get('/');
+		expect(response.status).toBe(200);
+	});
+	// 200
 	it('gets the /api endpoint with a 200 response', async () => {
 		const response = await request.get('/api');
 		expect(response.status).toBe(200);
 	});
-	// error
-	it('does not get the /api endpoint with a 404 response', async () => {
+	// route does not exist
+	it('does not get the endpoint with a 404 response', async () => {
 		const response = await request.get('/zzyzzyzyz');
 		expect(response.status).toBe(404);
 	});
-	// success
+	// 200
 	it('does get the /api/images endpoint with a 200 response', async () => {
 		const response = await request.get('/api/images');
 		expect(response.status).toBe(200);

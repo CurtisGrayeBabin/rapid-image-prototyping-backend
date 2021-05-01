@@ -1,29 +1,22 @@
 import * as express from 'express';
+import apiRoute from './api/api';
 import imagesRoute from './api/images';
 
+// server
 const app = express();
-
 const port = 3000;
 
-const logger = (
-	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) => {
-	next();
-};
-
-app.use(logger);
-
+// index handles GET / directly
 app.get(
-	'/api',
-	logger,
+	'/',
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		res.send('server online');
+		res.send('Image server online... enter /api for details');
 		next();
 	}
 );
 
+// route handling for image processing
+app.use('/', apiRoute);
 app.use('/api/', imagesRoute);
 
 app.listen(port, (): void => {
