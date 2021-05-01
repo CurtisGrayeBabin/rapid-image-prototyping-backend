@@ -2,12 +2,20 @@ Hello, this project takes JPG images and resizes them using the express and shar
 
 This project requires Node.js to be installed before it can run.
 
-Once that is done, you can cd into the project subfolder to run it.
+To run image processing and endpoint tests:
+1. npm run test
 
-The server can be run with either 
+To build src files to ./build:
+1. npm run build
+
+To lint:
+1. npm run lint
+
+The server can be run with either option:
 1. npm run start 
-or 
 2. node ./build/.
+
+Enter "localhost:3000/" to ensure the server is running.
 
 Enter "localhost:3000/api" for instructions to get resized images directly from the ./assets/full folder. You can also add your own images to ./assets/full so long as they are JPG format only!
 
