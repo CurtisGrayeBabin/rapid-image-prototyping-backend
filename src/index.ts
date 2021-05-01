@@ -4,7 +4,7 @@ import imagesRoute from './api/images';
 
 // server
 const app = express();
-const port = 3000;
+const port: number = 3000;
 
 // index handles GET / directly
 app.get(
@@ -17,10 +17,11 @@ app.get(
 
 // route handling for image processing
 app.use('/', apiRoute);
+// where the magic happens => /api/images?...
 app.use('/api/', imagesRoute);
 
 app.listen(port, (): void => {
-	console.log(`Listening in on port ${port}`);
+	console.log(`Listening in on port ${port}`, '\n');
 });
 
 export default app;

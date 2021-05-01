@@ -13,8 +13,9 @@ app.get('/', function (req, res, next) {
 });
 // route handling for image processing
 app.use('/', api_1.default);
+// where the magic happens => /api/images?...
 app.use('/api/', images_1.default);
 app.listen(port, function () {
-    console.log("Listening in on port " + port);
+    console.log("Listening in on port " + port, '\n');
 });
 exports.default = app;

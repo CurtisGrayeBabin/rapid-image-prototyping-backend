@@ -1,43 +1,65 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
-var imageProcessHandler_1 = require("../utilities/imageProcessHandler");
+var fs = require("fs");
+var sharp = require("sharp");
 var imagesRoute = express.Router();
-// middleware that sends the user an image in the browswer
+// middleware that either processes an image or not
 var imgPro = function (req, res, next) {
     // typecasting saves lives
     var filename = req.query.filename;
     var width = req.query.width;
     var height = req.query.height;
+    // have necessary query arguments
     if (filename && width && height) {
-        // image processing result
-        var choice = imageProcessHandler_1.default(filename, width, height);
-        // result possibilities
-        if (choice === -1) {
-            res.send('Error: image not created :(').status(404);
+        // path to full size image
+        var path = "./assets/full/" + filename + ".jpg";
+        // resize destination path
+        var checkPath = "./assets/thumb/" + filename + "_thumb.jpg";
+        // check if image in cache
+        if (fs.existsSync(checkPath)) {
+            // send cached image
+            console.log('Retrieving a cached image...', '\n');
+            // move on to send the user their previously cached image
             next();
         }
         else {
-            // const path = `./assets/thumb/${filename}_thumb.jpg`;
-            var path = "../assets/full/" + filename + ".jpg";
-            return res.sendFile(filename + ".jpg", { root: '../assets/full' }, function (err) {
-                if (err) {
-                    console.log('Error: Invalid image filename given.');
-                    next();
-                }
-                else {
-                    console.log('File successfully sent to user!');
-                }
+            // resizing of image handled as a promise
+            sharp(path)
+                .resize(Number(width), Number(height))
+                .toFile("./assets/thumb/" + filename + "_thumb.jpg")
+                .then(function (resolve) {
+                // successfully wrote and cached image to ./assets/thumb
+                console.log('Successfully resized and cached image!', '\n');
+                // send user their newly resized and cached image
+                next();
+            })
+                .catch(function (reject) {
+                // failed to resize the given image (likely a user error in entering values)
+                console.log('Invalid image request - please enter valid query values!', '\n');
+                res
+                    .status(404)
+                    .send('<p>404 Image not found</p>Try entering a query string in the proper format of [filename][width][height]!<p>Example: </p>localhost:3000/api/images?filename=santamonica&width=450&height=450');
             });
         }
     }
     else {
-        next();
+        // incomplete query string sent to endpoint
+        res
+            .status(404)
+            .send('<p>404 Image not found</p>Try entering a query string in the proper format of [filename][width][height]!<p>Example: </p>localhost:3000/api/images?filename=santamonica&width=450&height=450');
     }
 };
-// incorrect query string format route
+// send the user their (newly or previously) cached image
 imagesRoute.get('/images', imgPro, function (req, res, next) {
-    // user gets here by entering invalid parameters
-    res.send('Try entering a query string in the proper format of [filename][width][height]!');
+    // send the user their image
+    res.sendFile(req.query.filename + "_thumb.jpg", { root: './assets/thumb/' }, function (err) {
+        if (err) {
+            console.log('Error: could not send image to user...', '\n');
+        }
+        else {
+            console.log('Image successfully sent to user!', '\n');
+        }
+    });
 });
 exports.default = imagesRoute;

@@ -1,9 +1,10 @@
 import * as express from 'express';
-import imageHandler from '../utilities/imageProcessHandler';
+import * as fs from 'fs';
+import * as sharp from 'sharp';
 
 const imagesRoute = express.Router();
 
-// middleware that sends the user an image in the browswer
+// middleware that either processes an image or not
 const imgPro = (
 	req: express.Request,
 	res: express.Response,
@@ -14,39 +15,70 @@ const imgPro = (
 	const width = (req.query.width as unknown) as number;
 	const height = (req.query.height as unknown) as number;
 
+	// have necessary query arguments
 	if (filename && width && height) {
-		// image processing result
-		const choice = imageHandler(filename, width, height);
+		// path to full size image
+		const path = `./assets/full/${filename}.jpg`;
+		// resize destination path
+		const checkPath = `./assets/thumb/${filename}_thumb.jpg`;
 
-		// result possibilities
-		if (choice === -1) {
-			res.send('Error: image not created :(').status(404);
+		// check if image in cache
+		if (fs.existsSync(checkPath)) {
+			// send cached image
+			console.log('Retrieving a cached image...', '\n');
+			// move on to send the user their previously cached image
 			next();
 		} else {
-			// const path = `./assets/thumb/${filename}_thumb.jpg`;
-			const path = `../assets/full/${filename}.jpg`;
-
-			return res.sendFile(`${filename}.jpg`, { root: '../assets/full' }, (err) => {
-				if (err) {
-					console.log('Error: Invalid image filename given.');
+			// resizing of image handled as a promise
+			sharp(path)
+				.resize(Number(width), Number(height))
+				.toFile(`./assets/thumb/${filename}_thumb.jpg`)
+				.then((resolve) => {
+					// successfully wrote and cached image to ./assets/thumb
+					console.log('Successfully resized and cached image!', '\n');
+					// send user their newly resized and cached image
 					next();
-				} else {
-					console.log('File successfully sent to user!');
-				}
-			});
+				})
+				.catch((reject) => {
+					// failed to resize the given image (likely a user error in entering values)
+					console.log(
+						'Invalid image request - please enter valid query values!',
+						'\n'
+					);
+					res
+						.status(404)
+						.send(
+							'<p>404 Image not found</p>Try entering a query string in the proper format of [filename][width][height]!<p>Example: </p>localhost:3000/api/images?filename=santamonica&width=450&height=450'
+						);
+				});
 		}
 	} else {
-		next();
+		// incomplete query string sent to endpoint
+		res
+			.status(404)
+			.send(
+				'<p>404 Image not found</p>Try entering a query string in the proper format of [filename][width][height]!<p>Example: </p>localhost:3000/api/images?filename=santamonica&width=450&height=450'
+			);
 	}
 };
 
-// incorrect query string format route
+// send the user their (newly or previously) cached image
 imagesRoute.get(
 	'/images',
 	imgPro,
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		// user gets here by entering invalid parameters
-		res.send('Try entering a query string in the proper format of [filename][width][height]!');
+		// send the user their image
+		res.sendFile(
+			`${req.query.filename}_thumb.jpg`,
+			{ root: './assets/thumb/' },
+			(err) => {
+				if (err) {
+					console.log('Error: could not send image to user...', '\n');
+				} else {
+					console.log('Image successfully sent to user!', '\n');
+				}
+			}
+		);
 	}
 );
 
