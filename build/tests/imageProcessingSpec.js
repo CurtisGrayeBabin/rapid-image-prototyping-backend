@@ -4,11 +4,13 @@ var supertest = require("supertest");
 var fs = require("fs");
 var index_1 = require("../index");
 var request = supertest(index_1.default);
-var finalPath = './assets/thumb/test_thumb.jpg';
+// set these to the query parameters the test will look for to resize
+var _a = ['test', 200, 200], testFilename = _a[0], testWidth = _a[1], testHeight = _a[2];
+var testPath = "./assets/thumb/" + testFilename + "_" + testWidth + "_" + testHeight + "_thumb.jpg";
 var deleteResizedTestImage = function () {
-    if (fs.existsSync(finalPath)) {
+    if (fs.existsSync(testPath)) {
         // delete test_thumb.jpg from ./assets/thumb folder to ensure it can be re-generated
-        fs.unlinkSync(finalPath);
+        fs.unlinkSync(testPath);
     }
 };
 describe('Test image response', function () {
@@ -22,7 +24,7 @@ describe('Test image response', function () {
             .get('/api/images?filename=test&width=200&height=200')
             .then(function (result) {
             // ensure image was generated and stored in correct directory (./assets/thumb)
-            expect(fs.existsSync(finalPath)).toBeTruthy();
+            expect(fs.existsSync(testPath)).toBeTruthy();
         });
     });
     afterAll(function () {

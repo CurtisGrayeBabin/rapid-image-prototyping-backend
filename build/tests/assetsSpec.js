@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 describe('Test assets available', function () {
     it('ensures the assets folder exists', function () {
-        var path = '../assets';
+        var path = './assets';
         expect(fs.existsSync(path)).toBeTruthy();
     });
     it('ensures the assets/full folder exists', function () {
-        var path = '../assets/full';
+        var path = './assets/full';
         expect(fs.existsSync(path)).toBeTruthy();
     });
     it('ensures the assets/thumb folder exists', function () {
-        var path = '../assets/thumb';
+        var path = './assets/thumb';
         expect(fs.existsSync(path)).toBeTruthy();
     });
 });

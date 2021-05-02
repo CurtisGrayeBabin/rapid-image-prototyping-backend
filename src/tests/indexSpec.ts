@@ -1,8 +1,8 @@
 import * as supertest from 'supertest';
+import * as fs from 'fs';
 import app from '../index';
 
 const request = supertest(app);
-
 // endpoint tests are always asynchronous
 
 describe('Test endpoint responses', () => {
@@ -30,6 +30,11 @@ describe('Test endpoint responses', () => {
 			.get('/api/images?filename=santamonica&width=500&height=500')
 			.then((result) => {
 				expect(result.status).toBe(200);
+				try {
+					fs.unlinkSync('./assets/thumb/santamonica_500_500_thumb.jpg');
+				} catch {
+					console.log('error in deleting test image');
+				}
 			});
 	});
 	// 404
@@ -46,4 +51,9 @@ describe('Test endpoint responses', () => {
 			expect(result.status).toBe(404);
 		});
 	});
+	/*
+	afterAll((): void => {
+		fs.unlinkSync('santamonica_500_500_thumb.jpg');
+	});
+	*/
 });
