@@ -1,9 +1,12 @@
-Hello, this project takes JPG images and resizes them using the express and sharp packages. All resized images are also cached. There are a few starter JPG images already included with the installation of this project.
+Hello! This project takes JPG images and resizes them using the express and sharp packages. All resized images are also cached. There are a few starter JPG images already included with the installation of this project.
 
 This project requires Node.js to be installed before it can run.
 
 To run image processing and endpoint tests:
 1. npm run test
+
+To manually test server:
+1. npm run nodemon
 
 To build src files to ./build:
 1. npm run build

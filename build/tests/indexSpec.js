@@ -2,7 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest = require("supertest");
 var fs = require("fs");
+var path = require("path");
 var index_1 = require("../index");
+// found this method to get the path to assets via stackOverflow:
+// https://stackoverflow.com/questions/30845416/how-to-go-back-1-folder-level-with-dirname
+var assetsPath = path.join(__dirname, '../../assets');
+var pathToThumb = assetsPath + '/thumb/santamonica_500_500_thumb.jpg';
+console.log("Here it issss:" + pathToThumb);
 var request = supertest(index_1.default);
 // endpoint tests are always asynchronous
 describe('Test endpoint responses', function () {
@@ -31,7 +37,7 @@ describe('Test endpoint responses', function () {
             .then(function (result) {
             expect(result.status).toBe(200);
             try {
-                fs.unlinkSync('./assets/thumb/santamonica_500_500_thumb.jpg');
+                fs.unlinkSync(pathToThumb);
             }
             catch (_a) {
                 console.log('error in deleting test image');

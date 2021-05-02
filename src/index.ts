@@ -15,9 +15,8 @@ app.get(
 	}
 );
 
-// route handling for image processing
-app.use('/', apiRoute);
 // where the magic happens => /api/images?...
+app.use('/', apiRoute);
 app.use('/api/', imagesRoute);
 
 app.listen(port, (): void => {

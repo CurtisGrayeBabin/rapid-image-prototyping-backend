@@ -1,6 +1,14 @@
 import * as supertest from 'supertest';
 import * as fs from 'fs';
+import * as path from 'path';
 import app from '../index';
+
+// found this method to get the path to assets via stackOverflow:
+// https://stackoverflow.com/questions/30845416/how-to-go-back-1-folder-level-with-dirname
+const assetsPath = path.join(__dirname, '../../assets');
+const pathToThumb = assetsPath + '/thumb/santamonica_500_500_thumb.jpg';
+
+console.log(`Here it issss:${pathToThumb}`);
 
 const request = supertest(app);
 // endpoint tests are always asynchronous
@@ -31,7 +39,7 @@ describe('Test endpoint responses', () => {
 			.then((result) => {
 				expect(result.status).toBe(200);
 				try {
-					fs.unlinkSync('./assets/thumb/santamonica_500_500_thumb.jpg');
+					fs.unlinkSync(pathToThumb);
 				} catch {
 					console.log('error in deleting test image');
 				}

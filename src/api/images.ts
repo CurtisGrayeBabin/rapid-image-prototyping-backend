@@ -1,10 +1,16 @@
 import * as express from 'express';
 import * as fs from 'fs';
 import * as sharp from 'sharp';
+import * as path from 'path';
 
 const imagesRoute = express.Router();
 const imgNotFoundString =
 	'<p>404 Image not found</p>Try entering a query string in the proper format of [filename][width][height]!<p>Example: </p>localhost:3000/api/images?filename=santamonica&width=450&height=450';
+
+// found this method to get the path to assets via stackOverflow:
+// https://stackoverflow.com/questions/30845416/how-to-go-back-1-folder-level-with-dirname
+const assetsPath = path.join(__dirname, '../../assets');
+const thumbPath = assetsPath + '/thumb';
 
 // middleware that either processes an image or not
 const imgPro = (
@@ -19,12 +25,13 @@ const imgPro = (
 	// have necessary query arguments
 	if (filename && width && height) {
 		// path to full size image
-		const path = `./assets/full/${filename}.jpg`;
+		const _path = assetsPath + '/full/' + `${filename}.jpg`;
 		// resize destination path
-		const checkPath = `./assets/thumb/${filename}_${width}_${height}_thumb.jpg`;
+		const _checkPath =
+			assetsPath + '/thumb/' + `${filename}_${width}_${height}_thumb.jpg`;
 
 		// check if image in cache
-		if (fs.existsSync(checkPath)) {
+		if (fs.existsSync(_checkPath)) {
 			// send cached image
 			console.log('Retrieving a cached image...', '\n');
 			// move on to send the user their previously cached image
@@ -32,9 +39,9 @@ const imgPro = (
 		} else {
 			try {
 				// resizing of image handled as a promise
-				sharp(path)
+				sharp(_path)
 					.resize(Number(width), Number(height))
-					.toFile(checkPath)
+					.toFile(_checkPath)
 					.then((resolve) => {
 						// successfully wrote and cached image to ./assets/thumb
 						console.log('Successfully resized and cached a new image!', '\n');
@@ -72,7 +79,7 @@ imagesRoute.get(
 		// send the user their image
 		res.sendFile(
 			`${req.query.filename}_${req.query.width}_${req.query.height}_thumb.jpg`,
-			{ root: './assets/thumb/' },
+			{ root: thumbPath },
 			(err) => {
 				if (err) {
 					console.log('Error: could not send image to user...', '\n');
