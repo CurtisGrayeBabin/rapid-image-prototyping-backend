@@ -2,6 +2,9 @@ Hello! This project takes JPG images and resizes them using the express and shar
 
 This project requires Node.js to be installed before it can run.
 
+Install necessary dependencies:
+1. npm install
+
 To run image processing and endpoint tests:
 1. npm run test
 
